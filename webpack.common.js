@@ -9,7 +9,7 @@ module.exports = {
   entry: ['./src/main.js'],
   // mode: 'none', // none development production
   output: {
-    path: path.resolve (__dirname, 'dist'),
+    path: path.resolve (__dirname, 'docs'),
     filename: 'game.min.[hash:8].js',
   },
   target: 'web',
@@ -36,7 +36,7 @@ module.exports = {
       },
     }),
     new HtmlPlugin ({
-      file: path.join (__dirname, 'dist', 'index.html'),
+      file: path.join (__dirname, 'docs', 'index.html'),
       template: './index.html',
     }),
   ],
