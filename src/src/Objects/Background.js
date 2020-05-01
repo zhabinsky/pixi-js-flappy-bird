@@ -11,7 +11,7 @@ const {width, height} = window.appDimensions;
 app.stage.addChild (container);
 app.stage.addChild (layer);
 
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 3; i++) {
   const bg = new PIXI.Sprite (texture);
   backgrounds.push (bg);
 

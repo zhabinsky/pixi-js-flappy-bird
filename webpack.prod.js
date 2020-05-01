@@ -1,25 +1,30 @@
-const merge = require('webpack-merge')
-const common = require('./webpack.common.js')
+const merge = require ('webpack-merge');
+const common = require ('./webpack.common.js');
 
-module.exports = merge(common, {
-  mode:'production',
+module.exports = merge (common, {
+  mode: 'development',
   devtool: 'source-map',
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['@babel/preset-env', {
-              'corejs': '3',
-              'useBuiltIns': 'usage'
-            }]
-          ],
-          plugins: ['@babel/plugin-transform-runtime']
-        }
-      }
-    }]
-  }
-})
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  corejs: '3',
+                  useBuiltIns: 'usage',
+                },
+              ],
+            ],
+            plugins: ['@babel/plugin-transform-runtime'],
+          },
+        },
+      },
+    ],
+  },
+});

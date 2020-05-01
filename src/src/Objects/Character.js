@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js';
-
 const texture = PIXI.Texture.from ('assets/bluebird-downflap.png');
 const group = new PIXI.display.Group (1, false);
 const layer = new PIXI.display.Layer (group);
