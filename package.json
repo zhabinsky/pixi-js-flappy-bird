@@ -1,13 +1,13 @@
 {
-  "name": "pixi-webpack-demo",
+  "name": "pixijs-flappy-bird",
   "version": "1.0.0",
-  "description": "make pixi.js game with webpack",
+  "description": "Flappy bird implemented with PixiJS",
   "main": "src/src/main.js",
   "keywords": [
     "pixi.js",
     "webpack"
   ],
-  "author": "yulijun",
+  "author": "Vladislav Zhabinsky <vladislavzhabinsky@gmail.com>",
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --open 'google chrome' --config webpack.dev.js",
