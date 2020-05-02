@@ -50566,13 +50566,12 @@ app.stage.addChild(container);
 app.stage.addChild(layer);
 var player = new PIXI.Sprite(texture);
 container.addChild(player);
-var width = appDimensions.ofWidth(0.15);
+var width = appDimensions.ofWidth(0.13);
 var height = width * 24 / 34;
 
 var init = function init(state) {
   player.anchor.set(0.5);
   player.parentGroup = group;
-  player.zIndex = 99;
   player.width = width;
   player.height = height;
   player.x = state.playerPosition.x;
@@ -50955,4 +50954,4 @@ module.exports = __webpack_require__(/*! ./src/main.js */"./src/main.js");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=game.min.abe30c39.js.map
+//# sourceMappingURL=game.min.f2fdc788.js.map
