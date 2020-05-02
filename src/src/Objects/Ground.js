@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 const texture = PIXI.Texture.from ('assets/base.png');
-const group = new PIXI.display.Group (4, false);
+const group = new PIXI.display.Group (5, false);
 const layer = new PIXI.display.Layer (group);
 const container = new PIXI.Container ();
 
