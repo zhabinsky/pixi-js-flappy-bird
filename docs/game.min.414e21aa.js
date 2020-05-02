@@ -50376,33 +50376,40 @@ var _window$appDimensions = window.appDimensions,
 app.stage.addChild(container);
 app.stage.addChild(layer);
 
-for (var i = 0; i < 3; i++) {
-  var bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](texture);
-  bg.x = width * i;
-  bg.y = 0;
-  bg.width = width;
-  bg.height = height;
-  bg.anchor.set(0);
-  bg.parentGroup = group;
-  container.addChild(bg);
-  backgrounds.push(bg);
-}
+var init = function init(state) {
+  for (var i = 0; i < 3; i++) {
+    var bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](texture);
+    bg.x = width * i;
+    bg.y = 0;
+    bg.width = width;
+    bg.height = height;
+    bg.anchor.set(0);
+    bg.parentGroup = group;
+    container.addChild(bg);
+    backgrounds.push(bg);
+  }
+};
 
-/* harmony default export */ __webpack_exports__["default"] = (function (state, delta) {
-  if (!state.playing || state.lost) {
-    // user is not playing
+var update = function update(state, delta) {
+  if (!state.isPlaying || state.lost) {
+    // user is not isPlaying
     // not gonna move bg
     return;
   }
 
-  for (var _i = 0; _i < backgrounds.length; _i++) {
-    var _bg = backgrounds[_i];
-    _bg.x -= 0.2 * delta;
+  for (var i = 0; i < backgrounds.length; i++) {
+    var bg = backgrounds[i];
+    bg.x += state.groundSpeed * delta * 0.5;
 
-    if (_bg.x < -width) {
-      _bg.x += width * backgrounds.length;
+    if (bg.x < -width) {
+      bg.x += width * backgrounds.length;
     }
   }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  update: update,
+  init: init
 });
 
 /***/ }),
@@ -50425,30 +50432,111 @@ var layer = new PIXI.display.Layer(group);
 var container = new PIXI.Container();
 app.stage.addChild(container);
 app.stage.addChild(layer);
-var character = new PIXI.Sprite(texture);
-container.addChild(character);
+var player = new PIXI.Sprite(texture);
+container.addChild(player);
 var width = appDimensions.ofWidth(0.15);
 var height = width * 24 / 34;
-var initialPosition = {
-  x: appDimensions.ofWidth(0.5),
-  y: appDimensions.ofHeight(0.5)
+
+var init = function init(state) {
+  player.anchor.set(0.5);
+  player.parentGroup = group;
+  player.zIndex = 99;
+  player.width = width;
+  player.height = height;
+  player.x = state.playerPosition.x;
+  player.y = state.playerPosition.y;
 };
-character.anchor.set(0.5);
-character.parentGroup = group;
-character.zIndex = 99;
-character.width = width;
-character.height = height;
-character.x = initialPosition.x;
-character.y = initialPosition.y;
-/* harmony default export */ __webpack_exports__["default"] = (function (state, delta) {
-  if (!state.playing || state.lost) {
-    // user is not playing
+
+var checkCollision = function checkCollision(state, delta) {
+  var playerBottom = player.y + height / 2;
+  var groundStart = window.appDimensions.height - state.groundHeight;
+
+  if (playerBottom >= groundStart) {
+    state.lost = true;
+  }
+};
+
+var update = function update(state, delta) {
+  if (!state.isPlaying || state.lost) {// user is not isPlaying
     // quitting update function
+  } else {
+    state.playerSpeed += delta * state.gravityAcceleration;
+    state.playerPosition.y += state.playerSpeed * delta;
+    checkCollision(state, delta);
+  }
+
+  player.x = state.playerPosition.x;
+  player.y = state.playerPosition.y;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  update: update,
+  init: init
+});
+
+/***/ }),
+
+/***/ "./src/Objects/Ground.js":
+/*!*******************************!*\
+  !*** ./src/Objects/Ground.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.anchor */ "../node_modules/core-js/modules/es.string.anchor.js");
+/* harmony import */ var core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi.js */ "../node_modules/pixi.js/lib/pixi.es.js");
+
+
+var texture = pixi_js__WEBPACK_IMPORTED_MODULE_1__["Texture"].from('assets/base.png');
+var group = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Group(4, false);
+var layer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Layer(group);
+var container = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Container"]();
+var backgrounds = [];
+var _window$appDimensions = window.appDimensions,
+    width = _window$appDimensions.width,
+    height = _window$appDimensions.height;
+app.stage.addChild(container);
+app.stage.addChild(layer);
+
+var init = function init(state) {
+  var groundHeight = state.groundHeight;
+
+  for (var i = 0; i < 3; i++) {
+    var bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](texture);
+    bg.x = width * i;
+    bg.y = height - groundHeight;
+    bg.width = width;
+    bg.height = groundHeight;
+    bg.anchor.set(0);
+    bg.parentGroup = group;
+    container.addChild(bg);
+    backgrounds.push(bg);
+  }
+};
+
+var update = function update(state, delta) {
+  if (!state.isPlaying || state.lost) {
+    // user is not isPlaying
+    // not gonna move bg
     return;
   }
 
-  state.playerSpeed += delta * state.gravityAcceleration;
-  character.y += state.playerSpeed * delta;
+  for (var i = 0; i < backgrounds.length; i++) {
+    var bg = backgrounds[i];
+    bg.x += state.groundSpeed * delta;
+
+    if (bg.x < -width) {
+      bg.x += width * backgrounds.length;
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  init: init,
+  update: update
 });
 
 /***/ }),
@@ -50479,37 +50567,79 @@ __webpack_require__(/*! pixi-layers/dist/pixi-layers */ "../node_modules/pixi-la
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./src/init.js");
-/* harmony import */ var _Application__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Application */ "./src/Application.js");
-/* harmony import */ var _Objects_Background__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Objects/Background */ "./src/Objects/Background.js");
-/* harmony import */ var _Objects_Character__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Objects/Character */ "./src/Objects/Character.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.for-each */ "../node_modules/core-js/modules/es.array.for-each.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "../node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./init */ "./src/init.js");
+/* harmony import */ var _Application__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Application */ "./src/Application.js");
+/* harmony import */ var _Objects_Background__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Objects/Background */ "./src/Objects/Background.js");
+/* harmony import */ var _Objects_Ground__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Objects/Ground */ "./src/Objects/Ground.js");
+/* harmony import */ var _Objects_Character__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Objects/Character */ "./src/Objects/Character.js");
+/* harmony import */ var _utils_onClick__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/onClick */ "./src/utils/onClick.js");
 
 
 
 
 
-var updators = [_Objects_Background__WEBPACK_IMPORTED_MODULE_2__["default"], _Objects_Character__WEBPACK_IMPORTED_MODULE_3__["default"]];
+
+
+
+
+var gameObjects = [_Objects_Background__WEBPACK_IMPORTED_MODULE_4__["default"], _Objects_Ground__WEBPACK_IMPORTED_MODULE_5__["default"], _Objects_Character__WEBPACK_IMPORTED_MODULE_6__["default"]];
 var state = getDefaultState();
-_Application__WEBPACK_IMPORTED_MODULE_1__["default"].ticker.add(function (delta) {
+gameObjects.forEach(function (e) {
+  return e.init(state);
+});
+_Application__WEBPACK_IMPORTED_MODULE_3__["default"].ticker.add(function (delta) {
   // call every update function with game state object
-  for (var i = 0; i < updators.length; i++) {
-    var newState = updators[i](state, delta);
+  for (var i = 0; i < gameObjects.length; i++) {
+    var newState = gameObjects[i].update(state, delta);
     if (newState) state = newState;
   }
 });
 
 function getDefaultState() {
   return {
-    playing: false,
+    isPlaying: false,
+    lost: false,
+    playerPosition: {
+      x: appDimensions.ofWidth(0.5),
+      y: appDimensions.ofHeight(0.5)
+    },
     playerSpeed: 0,
-    playerSpeedJumped: appDimensions.constant(-15),
+    playerSpeedJumped: appDimensions.constant(-11),
     gravityAcceleration: appDimensions.constant(0.6),
-    lost: false
+    groundSpeed: appDimensions.constant(-1),
+    groundHeight: window.appDimensions.height * 0.12
   };
 }
 
-window.addEventListener('click', click);
-window.addEventListener('touchstart', click);
+Object(_utils_onClick__WEBPACK_IMPORTED_MODULE_7__["default"])(function (event) {
+  if (state.lost) {
+    state = getDefaultState();
+    return;
+  }
+
+  var _state = state,
+      isPlaying = _state.isPlaying,
+      playerSpeedJumped = _state.playerSpeedJumped;
+  if (!isPlaying) state.isPlaying = true;
+  state.playerSpeed = playerSpeedJumped;
+});
+
+/***/ }),
+
+/***/ "./src/utils/onClick.js":
+/*!******************************!*\
+  !*** ./src/utils/onClick.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var cbs = [];
 var hasRemovedRedundant = false;
 
 function click(event) {
@@ -50518,9 +50648,17 @@ function click(event) {
     hasRemovedRedundant = true;
   }
 
-  if (!state.playing) state.playing = true;
-  state.playerSpeed = state.playerSpeedJumped;
+  for (var i = 0; i < cbs.length; i++) {
+    var cb = cbs[i];
+    cb(event);
+  }
 }
+
+window.addEventListener('click', click);
+window.addEventListener('touchstart', click);
+/* harmony default export */ __webpack_exports__["default"] = (function (cb) {
+  cbs.push(cb);
+});
 
 /***/ }),
 
@@ -50537,4 +50675,4 @@ module.exports = __webpack_require__(/*! ./src/main.js */"./src/main.js");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=game.min.7a1d2c3e.js.map
+//# sourceMappingURL=game.min.414e21aa.js.map
