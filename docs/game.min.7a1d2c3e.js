@@ -50334,6 +50334,10 @@ appDimensions.ofHeight = function (scale) {
   return appDimensions.height * scale;
 };
 
+appDimensions.constant = function (value) {
+  return value * appDimensions.height / 700;
+};
+
 var app = new PIXI.Application(_objectSpread({}, appDimensions, {
   backgroundColor: 0x1099bb,
   view: document.querySelector('#scene'),
@@ -50498,7 +50502,8 @@ function getDefaultState() {
   return {
     playing: false,
     playerSpeed: 0,
-    gravityAcceleration: 0.6,
+    playerSpeedJumped: appDimensions.constant(-15),
+    gravityAcceleration: appDimensions.constant(0.6),
     lost: false
   };
 }
@@ -50509,21 +50514,12 @@ var hasRemovedRedundant = false;
 
 function click(event) {
   if (!hasRemovedRedundant) {
-    if (event.type === 'click') {
-      window.removeEventListener('touchstart', click);
-    } else {
-      window.removeEventListener('click', click);
-    }
-
+    if (event.type === 'click') window.removeEventListener('touchstart', click);else window.removeEventListener('click', click);
     hasRemovedRedundant = true;
   }
 
-  if (!state.playing) {
-    state.playing = true;
-  }
-
-  console.log('a');
-  state.playerSpeed = -15;
+  if (!state.playing) state.playing = true;
+  state.playerSpeed = state.playerSpeedJumped;
 }
 
 /***/ }),
@@ -50541,4 +50537,4 @@ module.exports = __webpack_require__(/*! ./src/main.js */"./src/main.js");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=game.min.e20fc09c.js.map
+//# sourceMappingURL=game.min.7a1d2c3e.js.map
