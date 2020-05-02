@@ -18,7 +18,8 @@
     "@babel/runtime": "^7.8.4",
     "core-js": "^3.6.4",
     "pixi-layers": "^0.2.3",
-    "pixi.js": "5.2.3"
+    "pixi.js": "5.2.3",
+    "stats.js": "^0.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

@@ -7,6 +7,11 @@ import Character from './Objects/Character';
 
 import app from './Application';
 import onClick from './utils/onClick';
+import Stats from 'stats.js';
+
+const stats = new Stats ();
+stats.showPanel (0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild (stats.dom);
 
 const gameObjects = [Background, Ground, Character];
 
@@ -14,19 +19,29 @@ let state = getDefaultState ();
 
 gameObjects.forEach (e => e.init (state));
 
+// call every update function with game state object
 app.ticker.add (delta => {
-  // call every update function with game state object
-  for (let i = 0; i < gameObjects.length; i++) {
-    const newState = gameObjects[i].update (state, delta);
+  stats.begin ();
 
-    if (newState) state = newState;
-  }
+  /**
+   * We divise delta time into n portions
+   * and call update function multiple times
+   * so that collision is detected faster
+   */
+  const n = 10;
+
+  for (let it = 0; it < n; it++)
+    for (let i = 0; i < gameObjects.length; i++)
+      gameObjects[i].update (state, delta / n);
+
+  stats.end ();
 });
 
 function getDefaultState () {
   return {
     isPlaying: false,
     lost: false,
+
     playerPosition: {
       x: appDimensions.ofWidth (0.5),
       y: appDimensions.ofHeight (0.5),
@@ -34,6 +49,7 @@ function getDefaultState () {
     playerSpeed: 0,
     playerSpeedJumped: appDimensions.constant (-11),
     gravityAcceleration: appDimensions.constant (0.6),
+
     groundSpeed: appDimensions.constant (-1),
     groundHeight: window.appDimensions.height * 0.12,
   };
