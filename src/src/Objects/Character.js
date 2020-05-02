@@ -6,34 +6,45 @@ const container = new PIXI.Container ();
 app.stage.addChild (container);
 app.stage.addChild (layer);
 
-const character = new PIXI.Sprite (texture);
+const player = new PIXI.Sprite (texture);
 
-container.addChild (character);
+container.addChild (player);
 
 const width = appDimensions.ofWidth (0.15);
 const height = width * 24 / 34;
 
-const initialPosition = {
-  x: appDimensions.ofWidth (0.5),
-  y: appDimensions.ofHeight (0.5),
+const init = state => {
+  player.anchor.set (0.5);
+  player.parentGroup = group;
+  player.zIndex = 99;
+  player.width = width;
+  player.height = height;
+
+  player.x = state.playerPosition.x;
+  player.y = state.playerPosition.y;
 };
 
-character.anchor.set (0.5);
-character.parentGroup = group;
-character.zIndex = 99;
-character.width = width;
-character.height = height;
+const checkCollision = (state, delta) => {
+  const playerBottom = player.y + height / 2;
+  const groundStart = window.appDimensions.height - state.groundHeight;
 
-character.x = initialPosition.x;
-character.y = initialPosition.y;
+  if (playerBottom >= groundStart) {
+    state.lost = true;
+  }
+};
 
-export default (state, delta) => {
-  if (!state.playing || state.lost) {
-    // user is not playing
+const update = (state, delta) => {
+  if (!state.isPlaying || state.lost) {
+    // user is not isPlaying
     // quitting update function
-    return;
+  } else {
+    state.playerSpeed += delta * state.gravityAcceleration;
+    state.playerPosition.y += state.playerSpeed * delta;
+    checkCollision (state, delta);
   }
 
-  state.playerSpeed += delta * state.gravityAcceleration;
-  character.y += state.playerSpeed * delta;
+  player.x = state.playerPosition.x;
+  player.y = state.playerPosition.y;
 };
+
+export default {update, init};

@@ -1,18 +1,23 @@
 import './init';
 import './Application';
 
-import updateBackground from './Objects/Background';
-import updateCharacter from './Objects/Character';
-import app from './Application';
+import Background from './Objects/Background';
+import Ground from './Objects/Ground';
+import Character from './Objects/Character';
 
-const updators = [updateBackground, updateCharacter];
+import app from './Application';
+import onClick from './utils/onClick';
+
+const gameObjects = [Background, Ground, Character];
 
 let state = getDefaultState ();
 
+gameObjects.forEach (e => e.init (state));
+
 app.ticker.add (delta => {
   // call every update function with game state object
-  for (let i = 0; i < updators.length; i++) {
-    const newState = updators[i] (state, delta);
+  for (let i = 0; i < gameObjects.length; i++) {
+    const newState = gameObjects[i].update (state, delta);
 
     if (newState) state = newState;
   }
@@ -20,26 +25,27 @@ app.ticker.add (delta => {
 
 function getDefaultState () {
   return {
-    playing: false,
-    playerSpeed: 0,
-    playerSpeedJumped: appDimensions.constant (-15),
-    gravityAcceleration: appDimensions.constant (0.6),
+    isPlaying: false,
     lost: false,
+    playerPosition: {
+      x: appDimensions.ofWidth (0.5),
+      y: appDimensions.ofHeight (0.5),
+    },
+    playerSpeed: 0,
+    playerSpeedJumped: appDimensions.constant (-11),
+    gravityAcceleration: appDimensions.constant (0.6),
+    groundSpeed: appDimensions.constant (-1),
+    groundHeight: window.appDimensions.height * 0.12,
   };
 }
 
-window.addEventListener ('click', click);
-window.addEventListener ('touchstart', click);
-let hasRemovedRedundant = false;
-
-function click (event) {
-  if (!hasRemovedRedundant) {
-    if (event.type === 'click')
-      window.removeEventListener ('touchstart', click);
-    else window.removeEventListener ('click', click);
-    hasRemovedRedundant = true;
+onClick (event => {
+  if (state.lost) {
+    state = getDefaultState ();
+    return;
   }
 
-  if (!state.playing) state.playing = true;
-  state.playerSpeed = state.playerSpeedJumped;
-}
+  const {isPlaying, playerSpeedJumped} = state;
+  if (!isPlaying) state.isPlaying = true;
+  state.playerSpeed = playerSpeedJumped;
+});

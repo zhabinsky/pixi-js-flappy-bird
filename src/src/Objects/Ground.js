@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 
-const texture = PIXI.Texture.from ('assets/background-day.png');
-const group = new PIXI.display.Group (2, false);
+const texture = PIXI.Texture.from ('assets/base.png');
+const group = new PIXI.display.Group (4, false);
 const layer = new PIXI.display.Layer (group);
 const container = new PIXI.Container ();
 
@@ -12,13 +12,14 @@ app.stage.addChild (container);
 app.stage.addChild (layer);
 
 const init = state => {
+  const {groundHeight} = state;
   for (let i = 0; i < 3; i++) {
     const bg = new PIXI.Sprite (texture);
 
     bg.x = width * i;
-    bg.y = 0;
+    bg.y = height - groundHeight;
     bg.width = width;
-    bg.height = height;
+    bg.height = groundHeight;
     bg.anchor.set (0);
     bg.parentGroup = group;
 
@@ -37,7 +38,7 @@ const update = (state, delta) => {
   for (let i = 0; i < backgrounds.length; i++) {
     const bg = backgrounds[i];
 
-    bg.x += state.groundSpeed * delta * 0.5;
+    bg.x += state.groundSpeed * delta;
 
     if (bg.x < -width) {
       bg.x += width * backgrounds.length;
@@ -45,4 +46,4 @@ const update = (state, delta) => {
   }
 };
 
-export default {update, init};
+export default {init, update};
