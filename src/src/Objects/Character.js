@@ -10,13 +10,12 @@ const player = new PIXI.Sprite (texture);
 
 container.addChild (player);
 
-const width = appDimensions.ofWidth (0.15);
+const width = appDimensions.ofWidth (0.13);
 const height = width * 24 / 34;
 
 const init = state => {
   player.anchor.set (0.5);
   player.parentGroup = group;
-  player.zIndex = 99;
   player.width = width;
   player.height = height;
 
