@@ -50362,7 +50362,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var texture = pixi_js__WEBPACK_IMPORTED_MODULE_1__["Texture"].from('assets/background-day.png');
-var group = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Group(-1, false);
+var group = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Group(2, false);
 var layer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Layer(group);
 var container = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Container"]();
 var backgrounds = [];
@@ -50374,18 +50374,23 @@ app.stage.addChild(layer);
 
 for (var i = 0; i < 3; i++) {
   var bg = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](texture);
-  backgrounds.push(bg);
   bg.x = width * i;
   bg.y = 0;
   bg.width = width;
-  bg.height = height; // bg.zIndex = -1;
-
+  bg.height = height;
   bg.anchor.set(0);
   bg.parentGroup = group;
   container.addChild(bg);
+  backgrounds.push(bg);
 }
 
-app.ticker.add(function (delta) {
+/* harmony default export */ __webpack_exports__["default"] = (function (state, delta) {
+  if (!state.playing || state.lost) {
+    // user is not playing
+    // not gonna move bg
+    return;
+  }
+
   for (var _i = 0; _i < backgrounds.length; _i++) {
     var _bg = backgrounds[_i];
     _bg.x -= 0.2 * delta;
@@ -50395,7 +50400,6 @@ app.ticker.add(function (delta) {
     }
   }
 });
-/* harmony default export */ __webpack_exports__["default"] = (group);
 
 /***/ }),
 
@@ -50412,23 +50416,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_0__);
 
 var texture = PIXI.Texture.from('assets/bluebird-downflap.png');
-var group = new PIXI.display.Group(1, false);
+var group = new PIXI.display.Group(3, false);
 var layer = new PIXI.display.Layer(group);
 var container = new PIXI.Container();
 app.stage.addChild(container);
 app.stage.addChild(layer);
 var character = new PIXI.Sprite(texture);
-character.anchor.set(0.5);
+container.addChild(character);
 var width = appDimensions.ofWidth(0.15);
-var height = width * 0.8;
-character.x = appDimensions.ofWidth(0.5);
-character.y = appDimensions.ofHeight(0.5);
+var height = width * 24 / 34;
+var initialPosition = {
+  x: appDimensions.ofWidth(0.5),
+  y: appDimensions.ofHeight(0.5)
+};
+character.anchor.set(0.5);
+character.parentGroup = group;
 character.zIndex = 99;
 character.width = width;
 character.height = height;
-character.parentGroup = group;
-container.addChild(character);
-/* harmony default export */ __webpack_exports__["default"] = (group);
+character.x = initialPosition.x;
+character.y = initialPosition.y;
+/* harmony default export */ __webpack_exports__["default"] = (function (state, delta) {
+  if (!state.playing || state.lost) {
+    // user is not playing
+    // quitting update function
+    return;
+  }
+
+  state.playerSpeed += delta * state.gravityAcceleration;
+  character.y += state.playerSpeed * delta;
+});
 
 /***/ }),
 
@@ -50467,6 +50484,35 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var updators = [_Objects_Background__WEBPACK_IMPORTED_MODULE_2__["default"], _Objects_Character__WEBPACK_IMPORTED_MODULE_3__["default"]];
+var state = getDefaultState();
+_Application__WEBPACK_IMPORTED_MODULE_1__["default"].ticker.add(function (delta) {
+  // call every update function with game state object
+  for (var i = 0; i < updators.length; i++) {
+    var newState = updators[i](state, delta);
+    if (newState) state = newState;
+  }
+});
+
+function getDefaultState() {
+  return {
+    playing: false,
+    playerSpeed: 0,
+    gravityAcceleration: 0.6,
+    lost: false
+  };
+}
+
+function click() {
+  if (!state.playing) {
+    state.playing = true;
+  }
+
+  state.playerSpeed = -15;
+}
+
+window.addEventListener('mousedown', click);
+
 /***/ }),
 
 /***/ 0:
@@ -50482,4 +50528,4 @@ module.exports = __webpack_require__(/*! ./src/main.js */"./src/main.js");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=game.min.967bf8e3.js.map
+//# sourceMappingURL=game.min.6ffff267.js.map

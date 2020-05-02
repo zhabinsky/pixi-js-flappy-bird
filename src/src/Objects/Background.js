@@ -26,7 +26,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 export default (state, delta) => {
-  if (!state.playing) {
+  if (!state.playing || state.lost) {
     // user is not playing
     // not gonna move bg
     return;

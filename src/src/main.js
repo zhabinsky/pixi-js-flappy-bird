@@ -23,6 +23,7 @@ function getDefaultState () {
     playing: false,
     playerSpeed: 0,
     gravityAcceleration: 0.6,
+    lost: false,
   };
 }
 

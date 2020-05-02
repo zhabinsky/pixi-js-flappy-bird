@@ -28,7 +28,7 @@ character.x = initialPosition.x;
 character.y = initialPosition.y;
 
 export default (state, delta) => {
-  if (!state.playing) {
+  if (!state.playing || state.lost) {
     // user is not playing
     // quitting update function
     return;
