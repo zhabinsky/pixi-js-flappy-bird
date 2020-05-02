@@ -40905,6 +40905,122 @@ $({ target: 'Array', proto: true, forced: [].forEach != forEach }, {
 
 /***/ }),
 
+/***/ "../node_modules/core-js/modules/es.array.index-of.js":
+/*!************************************************************!*\
+  !*** ../node_modules/core-js/modules/es.array.index-of.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "../node_modules/core-js/internals/export.js");
+var $indexOf = __webpack_require__(/*! ../internals/array-includes */ "../node_modules/core-js/internals/array-includes.js").indexOf;
+var arrayMethodIsStrict = __webpack_require__(/*! ../internals/array-method-is-strict */ "../node_modules/core-js/internals/array-method-is-strict.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "../node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var nativeIndexOf = [].indexOf;
+
+var NEGATIVE_ZERO = !!nativeIndexOf && 1 / [1].indexOf(1, -0) < 0;
+var STRICT_METHOD = arrayMethodIsStrict('indexOf');
+var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
+
+// `Array.prototype.indexOf` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.indexof
+$({ target: 'Array', proto: true, forced: NEGATIVE_ZERO || !STRICT_METHOD || !USES_TO_LENGTH }, {
+  indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
+    return NEGATIVE_ZERO
+      // convert -0 to +0
+      ? nativeIndexOf.apply(this, arguments) || 0
+      : $indexOf(this, searchElement, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/modules/es.array.splice.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/modules/es.array.splice.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "../node_modules/core-js/internals/export.js");
+var toAbsoluteIndex = __webpack_require__(/*! ../internals/to-absolute-index */ "../node_modules/core-js/internals/to-absolute-index.js");
+var toInteger = __webpack_require__(/*! ../internals/to-integer */ "../node_modules/core-js/internals/to-integer.js");
+var toLength = __webpack_require__(/*! ../internals/to-length */ "../node_modules/core-js/internals/to-length.js");
+var toObject = __webpack_require__(/*! ../internals/to-object */ "../node_modules/core-js/internals/to-object.js");
+var arraySpeciesCreate = __webpack_require__(/*! ../internals/array-species-create */ "../node_modules/core-js/internals/array-species-create.js");
+var createProperty = __webpack_require__(/*! ../internals/create-property */ "../node_modules/core-js/internals/create-property.js");
+var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "../node_modules/core-js/internals/array-method-has-species-support.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "../node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('splice');
+var USES_TO_LENGTH = arrayMethodUsesToLength('splice', { ACCESSORS: true, 0: 0, 1: 2 });
+
+var max = Math.max;
+var min = Math.min;
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+var MAXIMUM_ALLOWED_LENGTH_EXCEEDED = 'Maximum allowed length exceeded';
+
+// `Array.prototype.splice` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.splice
+// with adding support of @@species
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
+  splice: function splice(start, deleteCount /* , ...items */) {
+    var O = toObject(this);
+    var len = toLength(O.length);
+    var actualStart = toAbsoluteIndex(start, len);
+    var argumentsLength = arguments.length;
+    var insertCount, actualDeleteCount, A, k, from, to;
+    if (argumentsLength === 0) {
+      insertCount = actualDeleteCount = 0;
+    } else if (argumentsLength === 1) {
+      insertCount = 0;
+      actualDeleteCount = len - actualStart;
+    } else {
+      insertCount = argumentsLength - 2;
+      actualDeleteCount = min(max(toInteger(deleteCount), 0), len - actualStart);
+    }
+    if (len + insertCount - actualDeleteCount > MAX_SAFE_INTEGER) {
+      throw TypeError(MAXIMUM_ALLOWED_LENGTH_EXCEEDED);
+    }
+    A = arraySpeciesCreate(O, actualDeleteCount);
+    for (k = 0; k < actualDeleteCount; k++) {
+      from = actualStart + k;
+      if (from in O) createProperty(A, k, O[from]);
+    }
+    A.length = actualDeleteCount;
+    if (insertCount < actualDeleteCount) {
+      for (k = actualStart; k < len - actualDeleteCount; k++) {
+        from = k + actualDeleteCount;
+        to = k + insertCount;
+        if (from in O) O[to] = O[from];
+        else delete O[to];
+      }
+      for (k = len; k > len - actualDeleteCount + insertCount; k--) delete O[k - 1];
+    } else if (insertCount > actualDeleteCount) {
+      for (k = len - actualDeleteCount; k > actualStart; k--) {
+        from = k + actualDeleteCount - 1;
+        to = k + insertCount - 1;
+        if (from in O) O[to] = O[from];
+        else delete O[to];
+      }
+    }
+    for (k = 0; k < insertCount; k++) {
+      O[k + actualStart] = arguments[k + 2];
+    }
+    O.length = len - actualDeleteCount + insertCount;
+    return A;
+  }
+});
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/modules/es.object.define-properties.js":
 /*!**********************************************************************!*\
   !*** ../node_modules/core-js/modules/es.object.define-properties.js ***!
@@ -49366,6 +49482,22 @@ Loader.use = function LoaderUseStatic(fn) {
 
 /***/ }),
 
+/***/ "../node_modules/stats.js/build/stats.min.js":
+/*!***************************************************!*\
+  !*** ../node_modules/stats.js/build/stats.min.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// stats.js - http://github.com/mrdoob/stats.js
+(function(f,e){ true?module.exports=e():undefined})(this,function(){var f=function(){function e(a){c.appendChild(a.dom);return a}function u(a){for(var d=0;d<c.children.length;d++)c.children[d].style.display=d===a?"block":"none";l=a}var l=0,c=document.createElement("div");c.style.cssText="position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000";c.addEventListener("click",function(a){a.preventDefault();
+u(++l%c.children.length)},!1);var k=(performance||Date).now(),g=k,a=0,r=e(new f.Panel("FPS","#0ff","#002")),h=e(new f.Panel("MS","#0f0","#020"));if(self.performance&&self.performance.memory)var t=e(new f.Panel("MB","#f08","#201"));u(0);return{REVISION:16,dom:c,addPanel:e,showPanel:u,begin:function(){k=(performance||Date).now()},end:function(){a++;var c=(performance||Date).now();h.update(c-k,200);if(c>g+1E3&&(r.update(1E3*a/(c-g),100),g=c,a=0,t)){var d=performance.memory;t.update(d.usedJSHeapSize/
+1048576,d.jsHeapSizeLimit/1048576)}return c},update:function(){k=this.end()},domElement:c,setMode:u}};f.Panel=function(e,f,l){var c=Infinity,k=0,g=Math.round,a=g(window.devicePixelRatio||1),r=80*a,h=48*a,t=3*a,v=2*a,d=3*a,m=15*a,n=74*a,p=30*a,q=document.createElement("canvas");q.width=r;q.height=h;q.style.cssText="width:80px;height:48px";var b=q.getContext("2d");b.font="bold "+9*a+"px Helvetica,Arial,sans-serif";b.textBaseline="top";b.fillStyle=l;b.fillRect(0,0,r,h);b.fillStyle=f;b.fillText(e,t,v);
+b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{dom:q,update:function(h,w){c=Math.min(c,h);k=Math.max(k,h);b.fillStyle=l;b.globalAlpha=1;b.fillRect(0,0,r,m);b.fillStyle=f;b.fillText(g(h)+" "+e+" ("+g(c)+"-"+g(k)+")",t,v);b.drawImage(q,d+a,m,n-a,p,d,m,n-a,p);b.fillRect(d+n-a,m,a,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d+n-a,m,a,g((1-h/w)*p))}}};return f});
+
+
+/***/ }),
+
 /***/ "../node_modules/timers-browserify/main.js":
 /*!*************************************************!*\
   !*** ../node_modules/timers-browserify/main.js ***!
@@ -50491,7 +50623,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var texture = pixi_js__WEBPACK_IMPORTED_MODULE_1__["Texture"].from('assets/base.png');
-var group = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Group(4, false);
+var group = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Group(5, false);
 var layer = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["display"].Layer(group);
 var container = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Container"]();
 var backgrounds = [];
@@ -50541,6 +50673,129 @@ var update = function update(state, delta) {
 
 /***/ }),
 
+/***/ "./src/Objects/Tubes.js":
+/*!******************************!*\
+  !*** ./src/Objects/Tubes.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "../node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "../node_modules/core-js/modules/es.array.splice.js");
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.anchor */ "../node_modules/core-js/modules/es.string.anchor.js");
+/* harmony import */ var core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_anchor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! pixi.js */ "../node_modules/pixi.js/lib/pixi.es.js");
+
+
+
+
+var texture = pixi_js__WEBPACK_IMPORTED_MODULE_3__["Texture"].from('assets/pipe-green.png');
+var group = new pixi_js__WEBPACK_IMPORTED_MODULE_3__["display"].Group(4, false);
+var layer = new pixi_js__WEBPACK_IMPORTED_MODULE_3__["display"].Layer(group);
+var container = new pixi_js__WEBPACK_IMPORTED_MODULE_3__["Container"]();
+app.stage.addChild(container);
+app.stage.addChild(layer);
+var tubes = [];
+
+var createTube = function createTube(state, x) {
+  var tubeHeight = state.tubeHeight,
+      tubeWidth = state.tubeWidth,
+      tubeGap = state.tubeGap,
+      groundHeight = state.groundHeight;
+  var _appDimensions = appDimensions,
+      height = _appDimensions.height;
+
+  if (!x) {
+    x = tubes[tubes.length - 1].top.x + state.tubeDistance;
+  }
+
+  var yMin = height - groundHeight - tubeHeight;
+  var yMax = tubeHeight + tubeGap;
+  var y = yMin + (yMax - yMin) * Math.random();
+  var btm = new pixi_js__WEBPACK_IMPORTED_MODULE_3__["Sprite"](texture);
+  var top = new pixi_js__WEBPACK_IMPORTED_MODULE_3__["Sprite"](texture);
+  btm.anchor.set(0.5, 0);
+  top.anchor.set(0.5, 0);
+  top.angle = 180;
+  top.width = tubeWidth;
+  top.height = tubeHeight;
+  btm.width = tubeWidth;
+  btm.height = tubeHeight;
+  btm.parentGroup = group;
+  top.parentGroup = group;
+  container.addChild(btm);
+  container.addChild(top);
+
+  var setPosition = function setPosition(x, y) {
+    if (x) {
+      btm.x = x;
+      top.x = x;
+    }
+
+    if (y) {
+      btm.y = y;
+      top.y = y - tubeGap;
+    }
+  };
+
+  var dispose = function dispose() {
+    container.removeChild(btm);
+    container.removeChild(top);
+    btm.destroy();
+    top.destroy();
+    tubes.splice(tubes.indexOf(theTube), 1);
+  };
+
+  var theTube = {
+    setPosition: setPosition,
+    btm: btm,
+    top: top,
+    dispose: dispose
+  };
+  tubes.push(theTube);
+  setPosition(x, y);
+};
+
+var init = function init(state) {
+  createTube(state, appDimensions.width * 1.3);
+
+  for (var i = 0; i < 5; i++) {
+    createTube(state);
+  }
+};
+
+var update = function update(state, delta) {
+  if (!state.isPlaying || state.lost) {
+    // user is not isPlaying
+    // not gonna move tubes
+    return;
+  }
+
+  var tubeGone = null;
+
+  for (var i = 0; i < tubes.length; i++) {
+    var tube = tubes[i];
+    if (tube.top.x <= -state.tubeWidth / 2) tubeGone = tube;
+    tube.setPosition(tube.top.x + state.groundSpeed * delta);
+  }
+
+  if (tubeGone) {
+    tubeGone.dispose();
+    createTube(state);
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  init: init,
+  update: update
+});
+
+/***/ }),
+
 /***/ "./src/init.js":
 /*!*********************!*\
   !*** ./src/init.js ***!
@@ -50576,7 +50831,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Objects_Background__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Objects/Background */ "./src/Objects/Background.js");
 /* harmony import */ var _Objects_Ground__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Objects/Ground */ "./src/Objects/Ground.js");
 /* harmony import */ var _Objects_Character__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Objects/Character */ "./src/Objects/Character.js");
-/* harmony import */ var _utils_onClick__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/onClick */ "./src/utils/onClick.js");
+/* harmony import */ var _Objects_Tubes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Objects/Tubes */ "./src/Objects/Tubes.js");
+/* harmony import */ var _utils_onClick__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/onClick */ "./src/utils/onClick.js");
+/* harmony import */ var stats_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! stats.js */ "../node_modules/stats.js/build/stats.min.js");
+/* harmony import */ var stats_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(stats_js__WEBPACK_IMPORTED_MODULE_9__);
 
 
 
@@ -50586,17 +50844,35 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var gameObjects = [_Objects_Background__WEBPACK_IMPORTED_MODULE_4__["default"], _Objects_Ground__WEBPACK_IMPORTED_MODULE_5__["default"], _Objects_Character__WEBPACK_IMPORTED_MODULE_6__["default"]];
+
+
+var stats = new stats_js__WEBPACK_IMPORTED_MODULE_9___default.a();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+document.body.appendChild(stats.dom);
+var gameObjects = [_Objects_Background__WEBPACK_IMPORTED_MODULE_4__["default"], _Objects_Ground__WEBPACK_IMPORTED_MODULE_5__["default"], _Objects_Character__WEBPACK_IMPORTED_MODULE_6__["default"], _Objects_Tubes__WEBPACK_IMPORTED_MODULE_7__["default"]];
 var state = getDefaultState();
 gameObjects.forEach(function (e) {
   return e.init(state);
-});
+}); // call every update function with game state object
+
 _Application__WEBPACK_IMPORTED_MODULE_3__["default"].ticker.add(function (delta) {
-  // call every update function with game state object
-  for (var i = 0; i < gameObjects.length; i++) {
-    var newState = gameObjects[i].update(state, delta);
-    if (newState) state = newState;
+  stats.begin();
+  /**
+   * We divise delta time into n portions
+   * and call update function multiple times
+   * so that collision is detected faster
+   */
+
+  var n = 10;
+
+  for (var it = 0; it < n; it++) {
+    for (var i = 0; i < gameObjects.length; i++) {
+      gameObjects[i].update(state, delta / n);
+    }
   }
+
+  stats.end();
 });
 
 function getDefaultState() {
@@ -50608,14 +50884,18 @@ function getDefaultState() {
       y: appDimensions.ofHeight(0.5)
     },
     playerSpeed: 0,
-    playerSpeedJumped: appDimensions.constant(-11),
+    playerSpeedJumped: appDimensions.constant(-10),
     gravityAcceleration: appDimensions.constant(0.6),
-    groundSpeed: appDimensions.constant(-1),
-    groundHeight: window.appDimensions.height * 0.12
+    groundSpeed: appDimensions.constant(-4),
+    groundHeight: window.appDimensions.height * 0.12,
+    tubeWidth: appDimensions.ofWidth(0.14),
+    tubeHeight: appDimensions.height / 2,
+    tubeGap: appDimensions.ofHeight(0.24),
+    tubeDistance: appDimensions.ofWidth(0.6)
   };
 }
 
-Object(_utils_onClick__WEBPACK_IMPORTED_MODULE_7__["default"])(function (event) {
+Object(_utils_onClick__WEBPACK_IMPORTED_MODULE_8__["default"])(function (event) {
   if (state.lost) {
     state = getDefaultState();
     return;
@@ -50675,4 +50955,4 @@ module.exports = __webpack_require__(/*! ./src/main.js */"./src/main.js");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=game.min.414e21aa.js.map
+//# sourceMappingURL=game.min.abe30c39.js.map
