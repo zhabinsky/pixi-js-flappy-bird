@@ -5,6 +5,7 @@ const appDimensions = {
 
 appDimensions.ofWidth = scale => appDimensions.width * scale;
 appDimensions.ofHeight = scale => appDimensions.height * scale;
+appDimensions.constant = value => value * appDimensions.height / 700;
 
 const app = new PIXI.Application ({
   ...appDimensions,

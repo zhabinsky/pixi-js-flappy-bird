@@ -22,7 +22,8 @@ function getDefaultState () {
   return {
     playing: false,
     playerSpeed: 0,
-    gravityAcceleration: 0.6,
+    playerSpeedJumped: appDimensions.constant (-15),
+    gravityAcceleration: appDimensions.constant (0.6),
     lost: false,
   };
 }
@@ -30,21 +31,15 @@ function getDefaultState () {
 window.addEventListener ('click', click);
 window.addEventListener ('touchstart', click);
 let hasRemovedRedundant = false;
+
 function click (event) {
   if (!hasRemovedRedundant) {
-    if (event.type === 'click') {
+    if (event.type === 'click')
       window.removeEventListener ('touchstart', click);
-    } else {
-      window.removeEventListener ('click', click);
-    }
+    else window.removeEventListener ('click', click);
     hasRemovedRedundant = true;
   }
 
-  if (!state.playing) {
-    state.playing = true;
-  }
-
-  console.log ('a');
-
-  state.playerSpeed = -15;
+  if (!state.playing) state.playing = true;
+  state.playerSpeed = state.playerSpeedJumped;
 }
