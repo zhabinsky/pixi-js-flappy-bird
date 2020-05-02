@@ -50503,15 +50503,28 @@ function getDefaultState() {
   };
 }
 
-function click() {
+window.addEventListener('click', click);
+window.addEventListener('touchstart', click);
+var hasRemovedRedundant = false;
+
+function click(event) {
+  if (!hasRemovedRedundant) {
+    if (event.type === 'click') {
+      window.removeEventListener('touchstart', click);
+    } else {
+      window.removeEventListener('click', click);
+    }
+
+    hasRemovedRedundant = true;
+  }
+
   if (!state.playing) {
     state.playing = true;
   }
 
+  console.log('a');
   state.playerSpeed = -15;
 }
-
-window.addEventListener('mousedown', click);
 
 /***/ }),
 
@@ -50528,4 +50541,4 @@ module.exports = __webpack_require__(/*! ./src/main.js */"./src/main.js");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=game.min.6ffff267.js.map
+//# sourceMappingURL=game.min.e20fc09c.js.map
