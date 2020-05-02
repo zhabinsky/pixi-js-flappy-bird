@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 const texture = PIXI.Texture.from ('assets/background-day.png');
-const group = new PIXI.display.Group (-1, false);
+const group = new PIXI.display.Group (2, false);
 const layer = new PIXI.display.Layer (group);
 const container = new PIXI.Container ();
 
@@ -11,24 +11,35 @@ const {width, height} = window.appDimensions;
 app.stage.addChild (container);
 app.stage.addChild (layer);
 
+function click () {
+  //   sprite.scale.x *= 1.25;
+  //   sprite.scale.y *= 1.25;
+  console.log ('click');
+}
+
+window.addEventListener ('mousedown', click);
+
 for (let i = 0; i < 3; i++) {
   const bg = new PIXI.Sprite (texture);
-  backgrounds.push (bg);
 
   bg.x = width * i;
   bg.y = 0;
   bg.width = width;
   bg.height = height;
-
-  // bg.zIndex = -1;
   bg.anchor.set (0);
-
   bg.parentGroup = group;
 
   container.addChild (bg);
+  backgrounds.push (bg);
 }
 
-app.ticker.add (delta => {
+export default (state, delta) => {
+  if (!state.playing) {
+    // user is not playing
+    // not gonna move bg
+    return;
+  }
+
   for (let i = 0; i < backgrounds.length; i++) {
     const bg = backgrounds[i];
 
@@ -38,6 +49,4 @@ app.ticker.add (delta => {
       bg.x += width * backgrounds.length;
     }
   }
-});
-
-export default group;
+};
