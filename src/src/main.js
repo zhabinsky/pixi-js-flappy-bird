@@ -21,7 +21,8 @@ app.ticker.add (delta => {
 function getDefaultState () {
   return {
     playing: false,
-    gravityAcceleration: 1,
+    playerSpeed: 0,
+    gravityAcceleration: 0.6,
   };
 }
 
@@ -29,6 +30,8 @@ function click () {
   if (!state.playing) {
     state.playing = true;
   }
+
+  state.playerSpeed = -15;
 }
 
 window.addEventListener ('mousedown', click);

@@ -27,9 +27,6 @@ character.height = height;
 character.x = initialPosition.x;
 character.y = initialPosition.y;
 
-let speed = 0;
-let acceleration = 0;
-
 export default (state, delta) => {
   if (!state.playing) {
     // user is not playing
@@ -37,5 +34,6 @@ export default (state, delta) => {
     return;
   }
 
-  character.y += delta;
+  state.playerSpeed += delta * state.gravityAcceleration;
+  character.y += state.playerSpeed * delta;
 };

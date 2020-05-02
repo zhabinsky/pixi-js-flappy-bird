@@ -11,14 +11,6 @@ const {width, height} = window.appDimensions;
 app.stage.addChild (container);
 app.stage.addChild (layer);
 
-function click () {
-  //   sprite.scale.x *= 1.25;
-  //   sprite.scale.y *= 1.25;
-  console.log ('click');
-}
-
-window.addEventListener ('mousedown', click);
-
 for (let i = 0; i < 3; i++) {
   const bg = new PIXI.Sprite (texture);
 
