@@ -13,7 +13,7 @@ const tubes = [];
 const createTube = (state, x) => {
   const {tubeHeight, tubeWidth, tubeGap, groundHeight} = state;
 
-  const {height} = appDimensions;
+  const {height} = sizes;
 
   if (!x) {
     x = tubes[tubes.length - 1].top.x + state.tubeDistance;
@@ -75,7 +75,7 @@ const createTube = (state, x) => {
 };
 
 const init = state => {
-  createTube (state, appDimensions.width * 1.3);
+  createTube (state, sizes.width * 1.3);
   for (let i = 0; i < 5; i++) {
     createTube (state);
   }

@@ -44,20 +44,20 @@ function getDefaultState () {
     lost: false,
 
     playerPosition: {
-      x: appDimensions.ofWidth (0.5),
-      y: appDimensions.ofHeight (0.5),
+      x: sizes.ofWidth (0.5),
+      y: sizes.ofHeight (0.5),
     },
     playerSpeed: 0,
-    playerSpeedJumped: appDimensions.constant (-10),
-    gravityAcceleration: appDimensions.constant (0.6),
+    playerSpeedJumped: sizes.constant (-10),
+    gravityAcceleration: sizes.constant (0.6),
 
-    groundSpeed: appDimensions.constant (-4),
-    groundHeight: window.appDimensions.height * 0.12,
+    groundSpeed: sizes.constant (-4),
+    groundHeight: window.sizes.height * 0.12,
 
-    tubeWidth: appDimensions.ofWidth (0.14),
-    tubeHeight: appDimensions.height / 2,
-    tubeGap: appDimensions.ofHeight (0.24),
-    tubeDistance: appDimensions.ofWidth (0.6),
+    tubeWidth: sizes.ofWidth (0.14),
+    tubeHeight: sizes.height / 2,
+    tubeGap: sizes.ofHeight (0.24),
+    tubeDistance: sizes.ofWidth (0.6),
   };
 }
 

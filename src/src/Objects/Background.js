@@ -6,7 +6,7 @@ const layer = new PIXI.display.Layer (group);
 const container = new PIXI.Container ();
 
 const backgrounds = [];
-const {width, height} = window.appDimensions;
+const {width, height} = window.sizes;
 
 app.stage.addChild (container);
 app.stage.addChild (layer);

@@ -10,7 +10,7 @@ const player = new PIXI.Sprite (texture);
 
 container.addChild (player);
 
-const width = appDimensions.ofWidth (0.13);
+const width = sizes.ofWidth (0.13);
 const height = width * 24 / 34;
 
 const init = state => {
@@ -25,7 +25,7 @@ const init = state => {
 
 const checkCollision = (state, delta) => {
   const playerBottom = player.y + height / 2;
-  const groundStart = window.appDimensions.height - state.groundHeight;
+  const groundStart = window.sizes.height - state.groundHeight;
 
   if (playerBottom >= groundStart) {
     state.lost = true;
