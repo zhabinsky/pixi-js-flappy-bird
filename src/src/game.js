@@ -69,6 +69,10 @@ function getDefaultState () {
 onClick (event => {
   if (state.lost) {
     state = getDefaultState ();
+
+    Tubes.destroyAlltubes ();
+    Tubes.init (state);
+
     return;
   }
 

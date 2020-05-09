@@ -1,4 +1,5 @@
 import PIXI from '../pixi';
+import Tubes from './Tubes';
 
 const texture = PIXI.Texture.from ('assets/bluebird-downflap.png');
 const group = new PIXI.display.Group (3, false);
@@ -26,11 +27,23 @@ const init = state => {
 };
 
 const checkCollision = (state, delta) => {
+  // Ground collision check
   const playerBottom = player.y + height / 2;
   const groundStart = window.sizes.height - state.groundHeight;
 
-  if (playerBottom >= groundStart) {
-    state.lost = true;
+  if (playerBottom >= groundStart) state.lost = true;
+
+  // Tubes collision check
+  const tubes = Tubes.getTubes ();
+  const n = 3; // gonna check collision with first three tubes only
+  for (let i = 0; i < n; i++) {
+    const tube = tubes[i];
+
+    if (!tube) continue;
+
+    if (tube.checkCollision (player)) {
+      state.lost = true;
+    }
   }
 };
 
@@ -43,7 +56,6 @@ const update = (state, delta) => {
     state.playerPosition.y += state.playerSpeed * delta;
     checkCollision (state, delta);
   }
-
   player.x = state.playerPosition.x;
   player.y = state.playerPosition.y;
 };

@@ -56,11 +56,19 @@ const createTube = (state, x) => {
   const dispose = () => {
     container.removeChild (btm);
     container.removeChild (top);
-
     btm.destroy ();
     top.destroy ();
-
     tubes.splice (tubes.indexOf (theTube), 1);
+  };
+
+  const checkCollision = sprite => {
+    const spriteRect = sprite.getBounds (false);
+    const btmRect = btm.getBounds (false);
+    const topRect = top.getBounds (false);
+    return (
+      isIntersecting (spriteRect, btmRect) ||
+      isIntersecting (spriteRect, topRect)
+    );
   };
 
   const theTube = {
@@ -68,6 +76,7 @@ const createTube = (state, x) => {
     btm,
     top,
     dispose,
+    checkCollision,
   };
 
   tubes.push (theTube);
@@ -92,9 +101,7 @@ const update = (state, delta) => {
 
   for (let i = 0; i < tubes.length; i++) {
     const tube = tubes[i];
-
     if (tube.top.x <= -state.tubeWidth / 2) tubeGone = tube;
-
     tube.setPosition (tube.top.x + state.groundSpeed * delta);
   }
 
@@ -104,4 +111,26 @@ const update = (state, delta) => {
   }
 };
 
-export default {init, update};
+const getTubes = () => {
+  return tubes;
+};
+
+const destroyAlltubes = () => {
+  while (getTubes ().length > 0) {
+    getTubes ()[0].dispose ();
+  }
+};
+
+export default {
+  init,
+  update,
+  getTubes,
+  destroyAlltubes,
+};
+
+function isIntersecting (r1, r2) {
+  return !(r2.left > r1.right ||
+    r2.right < r1.left ||
+    r2.top > r1.bottom ||
+    r2.bottom < r1.top);
+}

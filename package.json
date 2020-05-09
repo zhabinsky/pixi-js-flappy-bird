@@ -1,5 +1,5 @@
 {
-  "name": "pixijs-flappy-bird",
+  "name": "pixi-js-flappy-bird",
   "version": "1.0.0",
   "description": "Flappy bird implemented with PixiJS",
   "main": "src/src/main.js",
