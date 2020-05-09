@@ -1,4 +1,4 @@
-import PIXI from './utils/pixi';
+import PIXI from './pixi';
 
 const width = document.getElementById ('container').clientWidth;
 const height = document.getElementById ('container').clientHeight;

@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js';
-
 const attachDisplayProperty = PIXI => {
   var pixi_display;
 
