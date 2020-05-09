@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import PIXI from '../utils/pixi';
 
 const texture = PIXI.Texture.from ('assets/background-day.png');
 const group = new PIXI.display.Group (2, false);
@@ -39,9 +39,7 @@ const update = (state, delta) => {
 
     bg.x += state.groundSpeed * delta * 0.5;
 
-    if (bg.x < -width) {
-      bg.x += width * backgrounds.length;
-    }
+    if (bg.x < -width) bg.x += width * backgrounds.length;
   }
 };
 

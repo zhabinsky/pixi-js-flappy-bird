@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import PIXI from '../utils/pixi';
 
 const texture = PIXI.Texture.from ('assets/base.png');
 const group = new PIXI.display.Group (5, false);

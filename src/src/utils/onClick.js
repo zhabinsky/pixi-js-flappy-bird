@@ -1,24 +1,23 @@
 const cbs = [];
 
-let hasRemovedRedundant = false;
+let hasRemovedDuplicateListener = false;
 
 function click (event) {
-  if (!hasRemovedRedundant) {
+  if (!hasRemovedDuplicateListener) {
     if (event.type === 'click')
       window.removeEventListener ('touchstart', click);
     else window.removeEventListener ('click', click);
-    hasRemovedRedundant = true;
+    hasRemovedDuplicateListener = true;
   }
 
-  for (let i = 0; i < cbs.length; i++) {
-    const cb = cbs[i];
-    cb (event);
-  }
+  for (let i = 0; i < cbs.length; i++)
+    cbs[i] (event);
 }
 
+// we will listen to both click and touchstar
+// to cover touch devices and desktop
+// later one of them will be removed
 window.addEventListener ('click', click);
 window.addEventListener ('touchstart', click);
 
-export default cb => {
-  cbs.push (cb);
-};
+export default cb => cbs.push (cb);

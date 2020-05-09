@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js';
+import PIXI from './utils/pixi';
 
 window.PIXI = PIXI;
-
-require ('pixi-layers/dist/pixi-layers'); // https://github.com/pixijs/pixi-layers

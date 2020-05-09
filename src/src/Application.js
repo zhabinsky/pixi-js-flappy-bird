@@ -1,14 +1,11 @@
-const sizes = {
-  width: document.getElementById ('container').clientWidth,
-  height: document.getElementById ('container').clientHeight,
-};
+import PIXI from './utils/pixi';
 
-sizes.ofWidth = scale => sizes.width * scale;
-sizes.ofHeight = scale => sizes.height * scale;
-sizes.constant = value => value * sizes.height / 700;
+const width = document.getElementById ('container').clientWidth;
+const height = document.getElementById ('container').clientHeight;
 
 const app = new PIXI.Application ({
-  ...sizes,
+  width,
+  height,
   backgroundColor: 0x1099bb,
   view: document.querySelector ('#scene'),
   resolution: window.devicePixelRatio || 1,
@@ -18,6 +15,18 @@ app.stage = new PIXI.display.Stage ();
 app.stage.sortableChildren = true;
 
 window.app = app;
-window.sizes = sizes;
+window.sizes = {
+  width,
+  height,
+  ofWidth (scale) {
+    return this.width * scale;
+  },
+  ofHeight (scale) {
+    return this.height * scale;
+  },
+  constant (value) {
+    return this.height / 700 * value;
+  },
+};
 
 export default app;

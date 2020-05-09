@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import PIXI from '../utils/pixi';
 
 const texture = PIXI.Texture.from ('assets/pipe-green.png');
 const group = new PIXI.display.Group (4, false);
