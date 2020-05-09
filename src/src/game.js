@@ -27,15 +27,12 @@ app.ticker.add (delta => {
     stats.begin ();
   }
 
-  stats.begin ();
-
   /**
    * We divise delta time into n portions
    * and call update function multiple times
    * so that collision is detected faster
    */
   const n = 5;
-
   for (let it = 0; it < n; it++)
     for (let i = 0; i < gameObjects.length; i++)
       gameObjects[i].update (state, delta / n);
