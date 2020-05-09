@@ -35,15 +35,30 @@ const checkCollision = (state, delta) => {
 
   // Tubes collision check
   const tubes = Tubes.getTubes ();
+
+  const spriteBounds = player.getBounds (false);
+  const characterRect = {
+    left: spriteBounds.left,
+    right: spriteBounds.right,
+    top: spriteBounds.top,
+    bottom: spriteBounds.bottom,
+  };
+
+  const m = 0.2;
+
+  characterRect.right -= player.width * m;
+  characterRect.left += player.width * m;
+  characterRect.top += player.height * m;
+  characterRect.bottom -= player.height * m;
+
   const n = 3; // gonna check collision with first three tubes only
+
   for (let i = 0; i < n; i++) {
     const tube = tubes[i];
 
     if (!tube) continue;
 
-    if (tube.checkCollision (player)) {
-      state.lost = true;
-    }
+    if (tube.checkCollision (characterRect)) state.lost = true;
   }
 };
 

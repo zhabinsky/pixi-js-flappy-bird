@@ -61,8 +61,7 @@ const createTube = (state, x) => {
     tubes.splice (tubes.indexOf (theTube), 1);
   };
 
-  const checkCollision = sprite => {
-    const spriteRect = sprite.getBounds (false);
+  const checkCollision = spriteRect => {
     const btmRect = btm.getBounds (false);
     const topRect = top.getBounds (false);
     return (
@@ -85,9 +84,8 @@ const createTube = (state, x) => {
 
 const init = state => {
   createTube (state, sizes.width * 1.3);
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 5; i++)
     createTube (state);
-  }
 };
 
 const update = (state, delta) => {

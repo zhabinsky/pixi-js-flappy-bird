@@ -52,6 +52,7 @@ function getDefaultState () {
       x: sizes.ofWidth (0.5),
       y: sizes.ofHeight (0.5),
     },
+
     playerSpeed: 0,
     playerSpeedJumped: sizes.constant (-10),
     gravityAcceleration: sizes.constant (0.6),
