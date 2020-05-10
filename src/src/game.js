@@ -5,6 +5,7 @@ import Background from './game-objects/Background';
 import Ground from './game-objects/Ground';
 import Character from './game-objects/Character';
 import Tubes from './game-objects/Tubes';
+import Counter from './game-objects/Counter';
 
 let stats;
 if (process.env.NODE_ENV === 'development') {
@@ -14,7 +15,7 @@ if (process.env.NODE_ENV === 'development') {
   document.body.appendChild (stats.dom);
 }
 
-const gameObjects = [Background, Ground, Character, Tubes];
+const gameObjects = [Background, Ground, Character, Tubes, Counter];
 
 let state = getDefaultState ();
 
@@ -64,6 +65,8 @@ function getDefaultState () {
     tubeHeight: sizes.height / 2,
     tubeGap: sizes.ofHeight (0.24),
     tubeDistance: sizes.ofWidth (0.6),
+
+    score: 0,
   };
 }
 

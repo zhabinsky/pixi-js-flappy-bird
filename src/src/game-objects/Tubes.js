@@ -1,8 +1,6 @@
 import PIXI from '../pixi';
 
-const textures = ['assets/pipe-red.png', 'assets/pipe-green.png'].map (e =>
-  PIXI.Texture.from (e)
-);
+const textures = ['assets/pipe-green.png'].map (e => PIXI.Texture.from (e));
 const group = new PIXI.display.Group (4, false);
 const layer = new PIXI.display.Layer (group);
 const container = new PIXI.Container ();
@@ -25,10 +23,12 @@ const createTube = (state, x) => {
   const yMax = tubeHeight + tubeGap;
   const y = yMin + (yMax - yMin) * Math.random ();
 
-  const texture = textures[Math.random () > 0.5 ? 0 : 1];
+  const texture = textures[0];
 
   const btm = new PIXI.Sprite (texture);
   const top = new PIXI.Sprite (texture);
+
+  let passed = false;
 
   btm.anchor.set (0.5, 0);
   top.anchor.set (0.5, 0);
@@ -55,6 +55,12 @@ const createTube = (state, x) => {
       btm.y = y;
       top.y = y - tubeGap;
     }
+    if (!passed) {
+      if (x <= sizes.width / 2 - tubeWidth / 2) {
+        state.score++;
+        passed = true;
+      }
+    }
   };
 
   const dispose = () => {
@@ -80,6 +86,7 @@ const createTube = (state, x) => {
     top,
     dispose,
     checkCollision,
+    passed,
   };
 
   tubes.push (theTube);

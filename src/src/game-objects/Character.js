@@ -17,7 +17,7 @@ const width = sizes.ofWidth (0.13);
 const height = width * 24 / 34;
 
 const init = state => {
-  player.anchor.set (0.5);
+  player.anchor.set (0.5, 0);
   player.parentGroup = group;
   player.width = width;
   player.height = height;
@@ -69,8 +69,17 @@ const update = (state, delta) => {
   } else {
     state.playerSpeed += delta * state.gravityAcceleration;
     state.playerPosition.y += state.playerSpeed * delta;
+
+    if (state.playerPosition.y < 0) {
+      state.playerPosition.y = 0;
+      state.playerSpeed = 0;
+
+      // disallow jumping above the screen
+    }
+
     checkCollision (state, delta);
   }
+
   player.x = state.playerPosition.x;
   player.y = state.playerPosition.y;
 };
